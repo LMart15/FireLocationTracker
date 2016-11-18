@@ -6,7 +6,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
-        <!--MapView App-->
+        <!--Location Tracker-->
         <scene sceneID="z5W-K7-idC">
             <objects>
                 <viewController id="bUx-Vq-Z5q" customClass="LoginViewController" customModule="FireLocationTracker" customModuleProvider="target" sceneMemberID="viewController">
@@ -91,7 +91,7 @@
                             <constraint firstItem="71c-Qn-zii" firstAttribute="top" secondItem="B8u-aC-m3t" secondAttribute="bottom" constant="54" id="xbA-Hi-I06"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="MapView App" id="8RS-Mq-nY3"/>
+                    <navigationItem key="navigationItem" title="Location Tracker" id="8RS-Mq-nY3"/>
                     <connections>
                         <outlet property="email_txt" destination="B8u-aC-m3t" id="1fy-yQ-Bya"/>
                         <outlet property="password_txt" destination="qTk-EZ-bK2" id="OpB-kL-cKk"/>
@@ -102,7 +102,7 @@
             </objects>
             <point key="canvasLocation" x="473" y="336"/>
         </scene>
-        <!--Map View Controller-->
+        <!--Map-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="MapViewController" customModule="FireLocationTracker" customModuleProvider="target" sceneMemberID="viewController">
@@ -114,7 +114,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="FNN-E3-QM4">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="FNN-E3-QM4">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </mapView>
                         </subviews>
@@ -126,6 +126,15 @@
                             <constraint firstItem="FNN-E3-QM4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="XSl-7D-JxG"/>
                         </constraints>
                     </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="Map" id="0Fa-nU-VMY">
+                        <barButtonItem key="rightBarButtonItem" style="plain" systemItem="action" id="5b7-pd-OxQ">
+                            <connections>
+                                <action selector="findMe:" destination="BYZ-38-t0r" id="Wt0-vM-pHo"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="mapView" destination="FNN-E3-QM4" id="8eP-g4-Wsa"/>
                     </connections>

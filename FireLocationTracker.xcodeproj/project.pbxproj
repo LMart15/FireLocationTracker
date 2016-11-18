@@ -207,6 +207,7 @@
 				TargetAttributes = {
 					55CCDFE21DDCFE180027E695 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = QQDL49Z2BR;
 						LastSwiftMigration = 0800;
 					};
 					55CCDFF61DDCFE180027E695 = {
@@ -489,6 +490,7 @@
 			baseConfigurationReference = 457DD7B2E8CB1DD61F85B619 /* Pods-FireLocationTracker.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = QQDL49Z2BR;
 				INFOPLIST_FILE = FireLocationTracker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mapd.centennial.FireLocationTracker;
@@ -502,6 +504,7 @@
 			baseConfigurationReference = 57227711279A319F8F55D0FC /* Pods-FireLocationTracker.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = QQDL49Z2BR;
 				INFOPLIST_FILE = FireLocationTracker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mapd.centennial.FireLocationTracker;
