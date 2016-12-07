@@ -11,12 +11,13 @@ import MapKit
 import FirebaseDatabase
 import FirebaseAuth
 
-class MapViewController: UIViewController,CLLocationManagerDelegate {
+class MapViewController: UIViewController,CLLocationManagerDelegate, UIApplicationDelegate {
     
     var dbRef:FIRDatabaseReference!
     var locations = [Location]()
     var authUser: String = ""
     var authUserUid:String = ""
+    var initialLocation:CLLocation?
     
     @IBOutlet weak var mapView: MKMapView!
     let myLocMgr = CLLocationManager()
@@ -26,12 +27,22 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         
         dbRef = FIRDatabase.database().reference().child("location-points")
         
-        myLocMgr.desiredAccuracy = kCLLocationAccuracyBest
-        myLocMgr.requestWhenInUseAuthorization()
-        myLocMgr.startUpdatingLocation()
-        myLocMgr.distanceFilter = 5
-        myLocMgr.delegate = self
-        
+        initLocationManager()
+        initFireAuth()
+
+    }
+    
+    //Signout user to initiate pin removal
+    func applicationDidEnterBackground(application: UIApplication) {
+        do{
+            try FIRAuth.auth()?.signOut()
+        }catch{
+            print("Error while signing out!")
+        }
+    }
+    
+    //get auth user
+    func initFireAuth(){
         
         FIRAuth.auth()?.addAuthStateDidChangeListener({ (auth:FIRAuth, user:FIRUser?) in
             if let user = user{
@@ -43,12 +54,16 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 print("Unauthorized")
             }
         })
- 
     }
     
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
+    func initLocationManager(){
+    
+        myLocMgr.desiredAccuracy = kCLLocationAccuracyBest
+        myLocMgr.requestWhenInUseAuthorization()
+        myLocMgr.startUpdatingLocation()
+        myLocMgr.distanceFilter = 5
+        myLocMgr.delegate = self
+    
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -60,26 +75,25 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         let myLat = myCoordinates.coordinate.latitude
         let myLong = myCoordinates.coordinate.longitude
         let myCoordinates2D = CLLocationCoordinate2D(latitude: myLat, longitude: myLong)
-        
-        // set span
-        let myLatDelta = 0.05
-        let myLongDelta = 0.05
-        let mySpan = MKCoordinateSpan(latitudeDelta: myLatDelta, longitudeDelta: myLongDelta)
-        let myRegion = MKCoordinateRegion(center: myCoordinates2D, span: mySpan)
+        initialLocation = CLLocation(latitude: myLat, longitude: myLong)
         
         //Create location object to store in Firebase
         let currentlocation = Location(title: authUser, coordinate: myCoordinates2D, locationOfUser: authUser)
         
-        
+        //create dbref with authuid as key
         let currentlocationRef = self.dbRef.child(self.authUserUid)
+        
+        //set location value in firebase
         currentlocationRef.setValue(currentlocation.toAnyObject())
+        
+        //set disconnect listener
+        currentlocationRef.onDisconnectRemoveValue()
         
     }
     
+    //Zoom on current user location
     @IBAction func findMe(sender: AnyObject) {
-        
-                //set initial location in Honolulu
-                let initialLocation = CLLocation(latitude: 21.282778, longitude: -157.829444)
+    
                 let regionRadius: CLLocationDistance = 1000
         
                 func centerMapOnLocation(location: CLLocation) {
@@ -88,24 +102,34 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                     mapView.setRegion(coordinateRegion, animated: true)
                 }
         
-                centerMapOnLocation(initialLocation)
+                centerMapOnLocation(initialLocation!)
         
     }
     
+    //observe DB function to see changes in location value
     func startObservingDB() {
         dbRef.observeEventType(.Value, withBlock: { (snapshot:FIRDataSnapshot) in
             var newLocations = [Location]()
             
             let allAnnotations = self.mapView.annotations
             self.mapView.removeAnnotations(allAnnotations)
-            
+           
+        
             for location in snapshot.children{
                 let locationObject = Location(snapshot: location as! FIRDataSnapshot)
-                newLocations.append(locationObject)
+                
+                //Filter authenticated user's location out
+                if !locationObject.locationOfUser.containsString(self.authUser){
+                    newLocations.append(locationObject)
+                }
+                
             }
             
             self.locations = newLocations
             self.mapView.addAnnotations(self.locations)
+            
+            //show default user location to get different pin
+            self.mapView.showsUserLocation = true
             
             
             }) {(error:NSError) in
